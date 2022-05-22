@@ -1,4 +1,11 @@
 terraform {
+  cloud {
+    organization = "Josh_Hew"
+    workspaces {
+      name = "Example-Workspace"
+    }
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -10,8 +17,12 @@ terraform {
 }
 
 provider "aws" {
-  profile = "JHew-Dev"
   region  = "us-east-1"
+  assume_role {
+    role_arn     = "arn:aws:iam::671055769841:role/OrganizationAccountAccessRole"
+    session_name = "terraform_dev"
+  }
+  
 }
 
 resource "aws_instance" "app_server" {
@@ -19,6 +30,6 @@ resource "aws_instance" "app_server" {
   instance_type = "t2.micro"
 
   tags = {
-    Name = "ExampleAppServerInstance"
+    Name = var.instance_name
   }
 }
